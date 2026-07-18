@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3 Years of Us ❤️</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>❤️</text></svg>">
+<style>
+  /* ============================================================
+     DESIGN
+     ============================================================ */
+  :root {
+    --bg: #14090f;
+    --bg-soft: #1e0e16;
+    --card: #261219;
+    --rose: #ff5e8a;
+    --rose-soft: #ff9db8;
+    --gold: #f5c77e;
+    --text: #fdf0f4;
+    --muted: #c79aa9;
+    --serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+    --sans: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    overflow-x: hidden;
+    line-height: 1.6;
+  }
+
+  /* Floating hearts canvas sits behind everything */
+  #hearts-canvas {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  main { position: relative; z-index: 1; }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem 1.25rem;
+    background:
+      radial-gradient(ellipse 80% 55% at 50% -10%, rgba(255, 94, 138, 0.22), transparent),
+      radial-gradient(ellipse 60% 40% at 85% 110%, rgba(245, 199, 126, 0.10), transparent);
+  }
+
+  .hero .eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.35em;
+    font-size: 0.8rem;
+    color: var(--gold);
+    margin-bottom: 1.2rem;
+    animation: fadeUp 1s ease both;
+  }
+
+  .hero h1 {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: clamp(2.6rem, 8vw, 5.5rem);
+    line-height: 1.1;
+    animation: fadeUp 1s 0.2s ease both;
+  }
+
+  .hero h1 .amp {
+    color: var(--rose);
+    font-style: italic;
+    padding: 0 0.15em;
+  }
+
+  .hero .three-years {
+    margin-top: 1.4rem;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: clamp(1.1rem, 3vw, 1.6rem);
+    color: var(--rose-soft);
+    animation: fadeUp 1s 0.4s ease both;
+  }
+
+  .hero .heart-beat {
+    font-size: 3rem;
+    margin-top: 2rem;
+    animation: fadeUp 1s 0.6s ease both, beat 1.6s 1.6s ease-in-out infinite;
+  }
+
+  .scroll-hint {
+    margin-top: 3rem;
+    color: var(--muted);
+    font-size: 0.85rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    animation: fadeUp 1s 0.8s ease both;
+  }
+  .scroll-hint::after {
+    content: '↓';
+    display: block;
+    font-size: 1.4rem;
+    margin-top: 0.4rem;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes beat {
+    0%, 100% { transform: scale(1); }
+    12%      { transform: scale(1.22); }
+    24%      { transform: scale(1); }
+    36%      { transform: scale(1.15); }
+    48%      { transform: scale(1); }
+  }
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(8px); }
+  }
+
+  /* ---------- Sections ---------- */
+  section { padding: 5rem 1.25rem; max-width: 1100px; margin: 0 auto; }
+
+  .section-title {
+    font-family: var(--serif);
+    font-size: clamp(1.8rem, 5vw, 2.8rem);
+    text-align: center;
+    margin-bottom: 0.6rem;
+  }
+  .section-sub {
+    text-align: center;
+    color: var(--muted);
+    margin-bottom: 3rem;
+    font-style: italic;
+  }
+
+  /* ---------- Counter ---------- */
+  .counter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 1rem;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  .counter-card {
+    background: linear-gradient(160deg, var(--card), var(--bg-soft));
+    border: 1px solid rgba(255, 94, 138, 0.25);
+    border-radius: 18px;
+    padding: 1.6rem 1rem;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+  }
+  .counter-card .num {
+    font-family: var(--serif);
+    font-size: clamp(2rem, 6vw, 3rem);
+    color: var(--rose);
+    font-variant-numeric: tabular-nums;
+  }
+  .counter-card .label {
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-top: 0.3rem;
+  }
+
+  /* ---------- Letter ---------- */
+  .letter {
+    background: linear-gradient(160deg, var(--card), var(--bg-soft));
+    border: 1px solid rgba(245, 199, 126, 0.22);
+    border-radius: 22px;
+    padding: clamp(1.8rem, 5vw, 3.5rem);
+    max-width: 760px;
+    margin: 0 auto;
+    box-shadow: 0 16px 44px rgba(0,0,0,0.4);
+    position: relative;
+  }
+  .letter::before {
+    content: '❝';
+    position: absolute;
+    top: -1.4rem;
+    left: 1.6rem;
+    font-size: 4rem;
+    color: var(--rose);
+    font-family: var(--serif);
+  }
+  .letter p {
+    font-family: var(--serif);
+    font-size: clamp(1.05rem, 2.5vw, 1.25rem);
+    color: var(--text);
+    margin-bottom: 1.2em;
+  }
+  .letter .signature {
+    text-align: right;
+    font-style: italic;
+    color: var(--rose-soft);
+    font-size: 1.15em;
+    margin-bottom: 0;
+  }
+
+  /* ---------- Milestones ---------- */
+  .timeline {
+    max-width: 700px;
+    margin: 0 auto;
+    position: relative;
+    padding-left: 2rem;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0.45rem;
+    top: 0.4rem;
+    bottom: 0.4rem;
+    width: 2px;
+    background: linear-gradient(180deg, var(--rose), var(--gold));
+    opacity: 0.5;
+  }
+  .milestone { position: relative; margin-bottom: 2.2rem; }
+  .milestone:last-child { margin-bottom: 0; }
+  .milestone::before {
+    content: '♥';
+    position: absolute;
+    left: -2rem;
+    top: 0.1rem;
+    color: var(--rose);
+    font-size: 0.9rem;
+  }
+  .milestone .when {
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-size: 0.72rem;
+    color: var(--gold);
+  }
+  .milestone .what {
+    font-family: var(--serif);
+    font-size: 1.2rem;
+    margin-top: 0.2rem;
+  }
+  .milestone .detail { color: var(--muted); font-size: 0.95rem; margin-top: 0.2rem; }
+
+  /* ---------- Gallery ---------- */
+  .gallery-section { max-width: 1250px; }
+
+  .gallery {
+    columns: 3 260px;
+    column-gap: 14px;
+  }
+  .gallery a {
+    display: block;
+    margin-bottom: 14px;
+    border-radius: 14px;
+    overflow: hidden;
+    break-inside: avoid;
+    position: relative;
+    background: var(--card);
+    border: 1px solid rgba(255, 94, 138, 0.15);
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .gallery a.visible { opacity: 1; transform: translateY(0); }
+  .gallery img {
+    width: 100%;
+    display: block;
+    transition: transform 0.5s ease, filter 0.5s ease;
+  }
+  .gallery a:hover img { transform: scale(1.05); filter: brightness(1.08); }
+
+  .gallery-empty {
+    text-align: center;
+    color: var(--muted);
+    background: var(--card);
+    border: 1px dashed rgba(255, 94, 138, 0.4);
+    border-radius: 18px;
+    padding: 3rem 1.5rem;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+  .gallery-empty strong { color: var(--rose-soft); }
+  .gallery-empty code {
+    background: rgba(255,255,255,0.08);
+    padding: 0.15em 0.45em;
+    border-radius: 6px;
+    font-size: 0.9em;
+  }
+
+  /* ---------- Lightbox ---------- */
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 4, 8, 0.94);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    padding: 2.5rem;
+  }
+  .lightbox.open { display: flex; }
+  .lightbox img {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 10px;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+  }
+  .lightbox button {
+    position: absolute;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.18);
+    color: var(--text);
+    font-size: 1.5rem;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+  }
+  .lightbox button:hover { background: rgba(255, 94, 138, 0.35); }
+  .lb-close { top: 1rem; right: 1rem; }
+  .lb-prev  { left: 1rem; top: 50%; transform: translateY(-50%); }
+  .lb-next  { right: 1rem; top: 50%; transform: translateY(-50%); }
+  .lb-count {
+    position: absolute;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--muted);
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+  }
+
+  /* ---------- Footer ---------- */
+  footer {
+    text-align: center;
+    padding: 4rem 1.25rem 5rem;
+    color: var(--muted);
+  }
+  footer .big-heart {
+    font-size: 2.2rem;
+    display: block;
+    margin-bottom: 1rem;
+    animation: beat 1.6s ease-in-out infinite;
+  }
+  footer .made-with {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--rose-soft);
+  }
+
+  @media (max-width: 600px) {
+    .gallery { columns: 2 150px; column-gap: 10px; }
+    .gallery a { margin-bottom: 10px; }
+    .lightbox { padding: 1rem; }
+    .lb-prev { left: 0.4rem; }
+    .lb-next { right: 0.4rem; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="hearts-canvas"></canvas>
+
+<main>
+  <!-- ======================= HERO ======================= -->
+  <header class="hero">
+    <p class="eyebrow">Happy 3 Year Anniversary</p>
+    <h1 id="hero-names">You <span class="amp">&amp;</span> Me</h1>
+    <p class="three-years" id="hero-tagline">Three years of us — and this is only the beginning.</p>
+    <div class="heart-beat">❤️</div>
+    <p class="scroll-hint">Scroll for our story</p>
+  </header>
+
+  <!-- ======================= COUNTER ======================= -->
+  <section>
+    <h2 class="section-title">Every Second With You</h2>
+    <p class="section-sub" id="counter-sub">…and still counting.</p>
+    <div class="counter-grid">
+      <div class="counter-card"><div class="num" id="c-days">0</div><div class="label">Days</div></div>
+      <div class="counter-card"><div class="num" id="c-hours">0</div><div class="label">Hours</div></div>
+      <div class="counter-card"><div class="num" id="c-mins">0</div><div class="label">Minutes</div></div>
+      <div class="counter-card"><div class="num" id="c-secs">0</div><div class="label">Seconds</div></div>
+    </div>
+  </section>
+
+  <!-- ======================= LETTER ======================= -->
+  <section>
+    <h2 class="section-title">A Letter For You</h2>
+    <p class="section-sub">from my heart to yours</p>
+    <div class="letter" id="letter">
+      <!-- Filled in from CONFIG below -->
+    </div>
+  </section>
+
+  <!-- ======================= MILESTONES ======================= -->
+  <section>
+    <h2 class="section-title">Our Story So Far</h2>
+    <p class="section-sub">a few moments I never want to forget</p>
+    <div class="timeline" id="timeline">
+      <!-- Filled in from CONFIG below -->
+    </div>
+  </section>
+
+  <!-- ======================= GALLERY ======================= -->
+  <section class="gallery-section">
+    <h2 class="section-title">Us, In Pictures</h2>
+    <p class="section-sub">every photo a favorite memory</p>
+    <div class="gallery" id="gallery"></div>
+    <div class="gallery-empty" id="gallery-empty" style="display:none">
+      <p><strong>No photos yet — but adding them is easy!</strong></p>
+      <p style="margin-top:0.8rem">Drop your pictures into the <code>anniversary/photos/</code> folder in this repository
+      (on github.com: open the folder → <em>Add file</em> → <em>Upload files</em>).</p>
+      <p style="margin-top:0.8rem">They'll appear here automatically. If you're viewing this page locally,
+      name them <code>1.jpg</code>, <code>2.jpg</code>, <code>3.jpg</code>… so the page can find them.</p>
+    </div>
+  </section>
+
+  <!-- ======================= FOOTER ======================= -->
+  <footer>
+    <span class="big-heart">❤️</span>
+    <p class="made-with" id="footer-text">Made with love, for the best three years of my life.</p>
+  </footer>
+</main>
+
+<!-- ======================= LIGHTBOX ======================= -->
+<div class="lightbox" id="lightbox">
+  <button class="lb-close" aria-label="Close">✕</button>
+  <button class="lb-prev" aria-label="Previous">‹</button>
+  <img id="lightbox-img" alt="Our photo">
+  <button class="lb-next" aria-label="Next">›</button>
+  <div class="lb-count" id="lb-count"></div>
+</div>
+
+<script>
+/* ================================================================
+   💗 EDIT THIS PART — make it yours!
+   Everything personal about the site lives in this CONFIG object.
+   Change the text, save, commit — done. No coding needed.
+   ================================================================ */
+const CONFIG = {
+  // Your names, shown big on the first screen. The "&" is added automatically.
+  names: ["You", "Me"],
+
+  // The day you got together: year, month, day (month is 1-12!)
+  anniversaryDate: new Date(2023, 6, 18),   // ← July 18, 2023 — CHANGE THIS
+
+  tagline: "Three years of us — and this is only the beginning.",
+
+  // Your letter to her. Each string is one paragraph.
+  letter: [
+    "Three years ago, my life changed in the best possible way — you walked into it.",
+    "Every day since has been better because of you. Your laugh, your kindness, the way you make even ordinary days feel special. I still can't believe I get to call you mine.",
+    "Thank you for three incredible years of adventures, inside jokes, late-night talks, and a love that keeps growing. Here's to us — to everything we've been, and everything we're going to be.",
+    "I love you more than words can say."
+  ],
+  signature: "Forever yours ❤️",
+
+  // Your story timeline. Add, remove or edit moments freely.
+  milestones: [
+    { when: "The Beginning",   what: "The day we met",          detail: "Where it all started — I knew you were special from day one." },
+    { when: "Year One",        what: "Falling for you",         detail: "Every date, every laugh, every moment made me more sure." },
+    { when: "Year Two",        what: "Building us",             detail: "Adventures, milestones, and growing together." },
+    { when: "Year Three",      what: "Stronger than ever",      detail: "Three years in, and I love you more every single day." },
+    { when: "The Future",      what: "Everything still ahead…", detail: "The best is yet to come. ❤️" }
+  ],
+
+  footer: "Made with love, for the best three years of my life."
+};
+
+/* ================================================================
+   Below here: the machinery. You never need to touch it.
+   ================================================================ */
+
+/* ---------- Fill in personal text ---------- */
+document.getElementById('hero-names').innerHTML =
+  `${CONFIG.names[0]} <span class="amp">&amp;</span> ${CONFIG.names[1]}`;
+document.getElementById('hero-tagline').textContent = CONFIG.tagline;
+document.getElementById('footer-text').textContent = CONFIG.footer;
+document.title = `${CONFIG.names[0]} & ${CONFIG.names[1]} — 3 Years ❤️`;
+
+const letterEl = document.getElementById('letter');
+letterEl.innerHTML =
+  CONFIG.letter.map(p => `<p></p>`).join('') + `<p class="signature"></p>`;
+[...letterEl.querySelectorAll('p:not(.signature)')].forEach((p, i) => p.textContent = CONFIG.letter[i]);
+letterEl.querySelector('.signature').textContent = CONFIG.signature;
+
+const timelineEl = document.getElementById('timeline');
+CONFIG.milestones.forEach(m => {
+  const div = document.createElement('div');
+  div.className = 'milestone';
+  const when = document.createElement('div');   when.className = 'when';   when.textContent = m.when;
+  const what = document.createElement('div');   what.className = 'what';   what.textContent = m.what;
+  const detail = document.createElement('div'); detail.className = 'detail'; detail.textContent = m.detail;
+  div.append(when, what, detail);
+  timelineEl.appendChild(div);
+});
+
+/* ---------- Live "time together" counter ---------- */
+function updateCounter() {
+  const diff = Math.max(0, Date.now() - CONFIG.anniversaryDate.getTime());
+  const s = Math.floor(diff / 1000);
+  document.getElementById('c-days').textContent  = Math.floor(s / 86400).toLocaleString();
+  document.getElementById('c-hours').textContent = Math.floor((s % 86400) / 3600);
+  document.getElementById('c-mins').textContent  = Math.floor((s % 3600) / 60);
+  document.getElementById('c-secs').textContent  = s % 60;
+}
+updateCounter();
+setInterval(updateCounter, 1000);
+
+/* ---------- Photo gallery: auto-discovers photos, zero maintenance ----------
+   Strategy 1: if hosted on GitHub Pages (username.github.io/repo/...), ask the
+               GitHub API to list everything in the photos/ folder. Any filename works.
+   Strategy 2 (fallback, works locally too): probe for photos named
+               1.jpg / 1.jpeg / 1.png / 1.webp, then 2.*, 3.*, … until a gap.  */
+const PHOTO_DIR = 'photos/';
+const galleryEl = document.getElementById('gallery');
+const emptyEl = document.getElementById('gallery-empty');
+const IMG_EXT = /\.(jpe?g|png|webp|gif|avif)$/i;
+let photoList = [];
+
+async function listPhotosViaGitHub() {
+  const host = location.hostname;                       // e.g. imarkkh.github.io
+  if (!host.endsWith('.github.io')) return null;
+  const owner = host.split('.')[0];
+  const parts = location.pathname.split('/').filter(Boolean); // [repo, ..., 'anniversary', ...]
+  if (parts.length === 0) return null;
+  const repo = parts[0];
+  const dirInRepo = parts.slice(1, parts[parts.length - 1].includes('.') ? -1 : undefined)
+                         .join('/');
+  const apiPath = (dirInRepo ? dirInRepo + '/' : '') + 'photos';
+  const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${apiPath}`);
+  if (!res.ok) return null;
+  const files = await res.json();
+  if (!Array.isArray(files)) return null;
+  return files
+    .filter(f => f.type === 'file' && IMG_EXT.test(f.name))
+    .sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }))
+    .map(f => PHOTO_DIR + encodeURIComponent(f.name));
+}
+
+function probe(src) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => resolve(true);
+    img.onerror = () => resolve(false);
+    img.src = src;
+  });
+}
+
+async function listPhotosByNumber(max = 200) {
+  const exts = ['jpg', 'jpeg', 'JPG', 'png', 'PNG', 'webp'];
+  const found = [];
+  for (let i = 1; i <= max; i++) {
+    let hit = null;
+    for (const ext of exts) {
+      // eslint-disable-next-line no-await-in-loop
+      if (await probe(`${PHOTO_DIR}${i}.${ext}`)) { hit = `${PHOTO_DIR}${i}.${ext}`; break; }
+    }
+    if (!hit) break;   // stop at the first missing number
+    found.push(hit);
+  }
+  return found;
+}
+
+function renderGallery(photos) {
+  photoList = photos;
+  if (!photos.length) { emptyEl.style.display = 'block'; return; }
+  emptyEl.style.display = 'none';
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+    });
+  }, { rootMargin: '80px' });
+
+  photos.forEach((src, i) => {
+    const a = document.createElement('a');
+    a.href = src;
+    a.addEventListener('click', ev => { ev.preventDefault(); openLightbox(i); });
+    const img = document.createElement('img');
+    img.src = src;
+    img.loading = 'lazy';
+    img.alt = `Memory ${i + 1}`;
+    a.appendChild(img);
+    galleryEl.appendChild(a);
+    observer.observe(a);
+  });
+}
+
+(async function initGallery() {
+  let photos = null;
+  try { photos = await listPhotosViaGitHub(); } catch (e) { /* fall through */ }
+  if (!photos || !photos.length) {
+    try { photos = await listPhotosByNumber(); } catch (e) { photos = []; }
+  }
+  renderGallery(photos || []);
+})();
+
+/* ---------- Lightbox ---------- */
+const lightbox = document.getElementById('lightbox');
+const lightboxImg = document.getElementById('lightbox-img');
+const lbCount = document.getElementById('lb-count');
+let lbIndex = 0;
+
+function openLightbox(i) {
+  lbIndex = i;
+  lightboxImg.src = photoList[i];
+  lbCount.textContent = `${i + 1} / ${photoList.length}`;
+  lightbox.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox() {
+  lightbox.classList.remove('open');
+  document.body.style.overflow = '';
+}
+function stepLightbox(dir) {
+  openLightbox((lbIndex + dir + photoList.length) % photoList.length);
+}
+lightbox.querySelector('.lb-close').addEventListener('click', closeLightbox);
+lightbox.querySelector('.lb-prev').addEventListener('click', () => stepLightbox(-1));
+lightbox.querySelector('.lb-next').addEventListener('click', () => stepLightbox(1));
+lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+document.addEventListener('keydown', e => {
+  if (!lightbox.classList.contains('open')) return;
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === 'ArrowLeft') stepLightbox(-1);
+  if (e.key === 'ArrowRight') stepLightbox(1);
+});
+
+/* ---------- Floating hearts background ---------- */
+const canvas = document.getElementById('hearts-canvas');
+const ctx = canvas.getContext('2d');
+let hearts = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+function spawnHeart() {
+  hearts.push({
+    x: Math.random() * canvas.width,
+    y: canvas.height + 20,
+    size: 8 + Math.random() * 14,
+    speed: 0.3 + Math.random() * 0.7,
+    drift: (Math.random() - 0.5) * 0.4,
+    alpha: 0.15 + Math.random() * 0.3,
+    wobble: Math.random() * Math.PI * 2
+  });
+}
+
+function drawHeart(h) {
+  ctx.save();
+  ctx.translate(h.x + Math.sin(h.wobble) * 12, h.y);
+  ctx.scale(h.size / 16, h.size / 16);
+  ctx.globalAlpha = h.alpha;
+  ctx.fillStyle = '#ff5e8a';
+  ctx.beginPath();
+  ctx.moveTo(0, 4);
+  ctx.bezierCurveTo(-8, -4, -16, 2, 0, 14);
+  ctx.bezierCurveTo(16, 2, 8, -4, 0, 4);
+  ctx.fill();
+  ctx.restore();
+}
+
+function tick() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  if (hearts.length < 26 && Math.random() < 0.08) spawnHeart();
+  hearts.forEach(h => {
+    h.y -= h.speed;
+    h.x += h.drift;
+    h.wobble += 0.02;
+  });
+  hearts = hearts.filter(h => h.y > -30);
+  hearts.forEach(drawHeart);
+  requestAnimationFrame(tick);
+}
+tick();
+</script>
+</body>
+</html>
