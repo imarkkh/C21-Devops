@@ -250,6 +250,18 @@ const btnYes = document.getElementById('btn-yes');
 const hint = document.getElementById('hint');
 let dodges = 0;
 
+function placeRandomly() {
+  // Jump somewhere random on screen, always fully visible
+  const pad = 16;
+  const w = btnNo.offsetWidth, h = btnNo.offsetHeight;
+  const maxX = Math.max(pad, window.innerWidth - w - pad);
+  const maxY = Math.max(pad, window.innerHeight - h - pad);
+  const x = Math.min(maxX, Math.max(pad, pad + Math.random() * (maxX - pad)));
+  const y = Math.min(maxY, Math.max(pad, pad + Math.random() * (maxY - pad)));
+  btnNo.style.left = x + 'px';
+  btnNo.style.top = y + 'px';
+}
+
 function dodge() {
   dodges++;
   hint.classList.add('show');
@@ -260,15 +272,19 @@ function dodge() {
   // Cycle the teasing text
   btnNo.textContent = ASK.noTexts[Math.min(dodges, ASK.noTexts.length - 1)];
 
-  // Jump somewhere random on screen (kept fully visible)
-  btnNo.classList.add('fleeing');
-  const pad = 12;
-  const w = btnNo.offsetWidth, h = btnNo.offsetHeight;
-  const x = pad + Math.random() * (window.innerWidth - w - pad * 2);
-  const y = pad + Math.random() * (window.innerHeight - h - pad * 2);
-  btnNo.style.left = x + 'px';
-  btnNo.style.top = y + 'px';
+  // Move the button to <body> when it starts fleeing: ancestors with CSS
+  // animations break position:fixed, which sent it flying off-screen.
+  if (!btnNo.classList.contains('fleeing')) {
+    btnNo.classList.add('fleeing');
+    document.body.appendChild(btnNo);
+  }
+  placeRandomly();
 }
+
+// If the screen size changes (phone rotation etc.), pull the button back in view
+window.addEventListener('resize', () => {
+  if (btnNo.classList.contains('fleeing')) placeRandomly();
+});
 
 btnNo.addEventListener('mouseenter', dodge);
 btnNo.addEventListener('touchstart', e => { e.preventDefault(); dodge(); }, { passive: false });
