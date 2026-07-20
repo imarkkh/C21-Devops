@@ -520,34 +520,46 @@ updateCounter();
 setInterval(updateCounter, 1000);
 
 /* ---------- Photo gallery: auto-discovers photos, zero maintenance ----------
-   Strategy 1: if hosted on GitHub Pages (username.github.io/repo/...), ask the
-               GitHub API to list everything in the photos/ folder. Any filename works.
-   Strategy 2 (fallback, works locally too): probe for photos named
+   Strategy 1: read photos/manifest.json (kept up to date automatically by the
+               GitHub Action in .github/workflows/photo-manifest.yml).
+   Strategy 2: ask the GitHub API to list the photos/ folder, trying every
+               branch the site might be deployed from. Any filename works.
+   Strategy 3 (fallback, works locally too): probe for photos named
                1.jpg / 1.jpeg / 1.png / 1.webp, then 2.*, 3.*, … until a gap.  */
 const PHOTO_DIR = 'photos/';
+const REPO_OWNER = 'imarkkh';
+const REPO_NAME = 'C21-Devops';
+const BRANCHES_TO_TRY = ['', 'claude/anniversary-website-photos-l5m66o', 'master', 'main'];
 const galleryEl = document.getElementById('gallery');
 const emptyEl = document.getElementById('gallery-empty');
 const IMG_EXT = /\.(jpe?g|png|webp|gif|avif)$/i;
 let photoList = [];
 
-async function listPhotosViaGitHub() {
-  const host = location.hostname;                       // e.g. imarkkh.github.io
-  if (!host.endsWith('.github.io')) return null;
-  const owner = host.split('.')[0];
-  const parts = location.pathname.split('/').filter(Boolean); // [repo, ..., 'anniversary', ...]
-  if (parts.length === 0) return null;
-  const repo = parts[0];
-  const dirInRepo = parts.slice(1, parts[parts.length - 1].includes('.') ? -1 : undefined)
-                         .join('/');
-  const apiPath = (dirInRepo ? dirInRepo + '/' : '') + 'photos';
-  const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${apiPath}`);
+async function listPhotosViaManifest() {
+  const res = await fetch(PHOTO_DIR + 'manifest.json', { cache: 'no-cache' });
   if (!res.ok) return null;
-  const files = await res.json();
-  if (!Array.isArray(files)) return null;
-  return files
-    .filter(f => f.type === 'file' && IMG_EXT.test(f.name))
-    .sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }))
-    .map(f => PHOTO_DIR + encodeURIComponent(f.name));
+  const names = await res.json();
+  if (!Array.isArray(names)) return null;
+  return names.filter(n => IMG_EXT.test(n)).map(n => PHOTO_DIR + encodeURIComponent(n));
+}
+
+async function listPhotosViaGitHub() {
+  for (const branch of BRANCHES_TO_TRY) {
+    const ref = branch ? `?ref=${encodeURIComponent(branch)}` : '';
+    const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/anniversary/photos${ref}`;
+    // eslint-disable-next-line no-await-in-loop
+    const res = await fetch(url).catch(() => null);
+    if (!res || !res.ok) continue;
+    // eslint-disable-next-line no-await-in-loop
+    const files = await res.json();
+    if (!Array.isArray(files)) continue;
+    const photos = files
+      .filter(f => f.type === 'file' && IMG_EXT.test(f.name))
+      .sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }))
+      .map(f => PHOTO_DIR + encodeURIComponent(f.name));
+    if (photos.length) return photos;
+  }
+  return null;
 }
 
 function probe(src) {
@@ -601,7 +613,10 @@ function renderGallery(photos) {
 
 (async function initGallery() {
   let photos = null;
-  try { photos = await listPhotosViaGitHub(); } catch (e) { /* fall through */ }
+  try { photos = await listPhotosViaManifest(); } catch (e) { /* fall through */ }
+  if (!photos || !photos.length) {
+    try { photos = await listPhotosViaGitHub(); } catch (e) { /* fall through */ }
+  }
   if (!photos || !photos.length) {
     try { photos = await listPhotosByNumber(); } catch (e) { photos = []; }
   }

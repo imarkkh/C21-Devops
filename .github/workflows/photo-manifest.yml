@@ -1,0 +1,33 @@
+name: Update photo manifest
+
+# Whenever photos are added or removed in anniversary/photos/, regenerate
+# manifest.json so the website's gallery always knows what to show.
+on:
+  push:
+    paths:
+      - "anniversary/photos/**"
+
+permissions:
+  contents: write
+
+jobs:
+  manifest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Regenerate manifest.json
+        run: |
+          cd anniversary/photos
+          ls | grep -iE '\.(jpe?g|png|webp|gif|avif)$' | sort -V \
+            | python3 -c "import sys, json; print(json.dumps([l.strip() for l in sys.stdin], indent=2))" \
+            > manifest.json
+          cat manifest.json
+
+      - name: Commit manifest if it changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add anniversary/photos/manifest.json
+          git diff --cached --quiet || git commit -m "Update photo manifest [skip ci]"
+          git push
