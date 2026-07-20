@@ -1,6 +1,13 @@
 # ❤️ 3-Year Anniversary Website
 
-A romantic single-page website for your 3-year anniversary, with:
+A romantic two-page website for your 3-year anniversary:
+
+**Page 1 — `index.html` (the question 💌):** asks her to be your girlfriend
+again. The "No" button runs away when she tries to press it, and saying Yes
+sets off a heart explosion and leads to page 2. Edit her name and the teasing
+"No" button texts in the `ASK` block at the top of the script.
+
+**Page 2 — `anniversary.html` (the anniversary 💘):**
 
 - 💌 A hero screen with your names and a beating heart
 - ⏱️ A live counter of days / hours / minutes / seconds together
@@ -10,7 +17,7 @@ A romantic single-page website for your 3-year anniversary, with:
 
 ## 1. Make it personal (5 minutes)
 
-Open `index.html` and find the `CONFIG` block near the top of the `<script>`
+Open `anniversary.html` and find the `CONFIG` block near the top of the `<script>`
 section — it's clearly marked with **"💗 EDIT THIS PART"**. Change:
 
 - `names` — your two names
